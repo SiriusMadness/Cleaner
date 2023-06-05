@@ -1,0 +1,68 @@
+import os
+from tkinter import filedialog, Tk
+import shutil
+import tkinter
+import sys
+# Создаем корневое окно Tkinter
+root = Tk()
+root.withdraw()
+
+try:
+    # путь
+    path = filedialog.askdirectory()
+    if not path:
+        print("Путь не выбран. Выход из программы.")
+        sys.exit()
+    files = os.listdir(path)
+    
+    # папки
+    data=['Картинки','Видео','Текстовые','Ворд','Музыка','Презентации']
+    for i in range(len(data)):
+        index = os.path.join(path,data[i])
+        if os.path.exists(index):
+            break
+        else:
+            os.makedirs(index)
+    
+    img = os.path.join(path,'Картинки')
+    Vid = os.path.join(path,'Видео')
+    Txt = os.path.join(path,'Текстовые')
+    Word = os.path.join(path,'Ворд')
+    Mp3 = os.path.join(path,'Музыка')
+    Present = os.path.join(path,'Презентации')
+
+    file_dict = {}
+
+    for file in files:
+        file_extension = os.path.splitext(file)[1]
+        if file_extension in file_dict:
+            file_dict[file_extension].append(file)
+        else:
+            file_dict[file_extension] = [file]
+
+
+    for extension, file_list in file_dict.items():
+        destination_folder = None
+        
+        if extension == ".jpg" or extension == ".png" or extension == ".jpeg" or extension == ".gif":
+            destination_folder = img
+        elif extension == ".mp4" or extension == ".avi":
+            destination_folder = Vid
+        elif extension == ".txt":
+            destination_folder = Txt
+        elif extension == ".docx":
+            destination_folder = Word
+        elif extension == ".mp3":
+            destination_folder = Mp3
+        elif extension == ".pptx":
+            destination_folder = Present        
+
+        if destination_folder:
+            for file in file_list:
+                source_path = os.path.join(path, file)
+                destination_path = os.path.join(destination_folder, file)
+                shutil.move(source_path, destination_path)
+
+except tkinter.TclError:
+    print("Отменено пользователем. Выход из программы.")
+    sys.exit()
